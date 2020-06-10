@@ -104,8 +104,6 @@ source $ZSH/oh-my-zsh.sh
 
 
 ## Aliases
-alias as400="telnet as400.corpict.net"
-alias noas400="pkill telnet"
 export GPG_TTY=$(tty)
 alias GetIP='ip a s eth0 | grep -E -o "([[:digit:]]{1,3}\.){1,3}([[:digit:]]{1,3}\/[[:digit:]]{1,2})"'
 
