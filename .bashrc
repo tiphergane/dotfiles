@@ -119,8 +119,6 @@ fi
 alias ll="ls -al"
 alias wipe="srm -vz"
 alias grep="grep --color=auto"
-alias as400="telnet as400.corpict.net 23; export a4s=$!"
-alias noas400="sudo pkill telnet"
 export GPG_TTY=$(tty)
 
 PATH="/home/tiphergane/perl5/bin${PATH:+:${PATH}}"; export PATH;
