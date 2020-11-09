@@ -1,19 +1,26 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:/opt:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/tiphergane/.oh-my-zsh"
+export ZSH="/home/$USER/.oh-my-zsh"
 export TERM="xterm-256color"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-# ZSH_THEME="amuse"
-#ZSH_THEME="agnoster"
+#ZSH_THEME="robbyrussell"
 ZSH_THEME="powerlevel10k/powerlevel10k"
+#POWERLEVEL9K_MODE='awesome-patched' 
+POWERLEVEL9K_MODE='nerdfont-complete'
 
-# Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in $ZSH/themes/
 # If set to an empty array, this variable will have no effect.
@@ -71,7 +78,7 @@ COMPLETION_WAITING_DOTS="true"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(debian python git)
+plugins=(git ufw debian systemd encode64 gpg-agent nmap torrent)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -83,11 +90,11 @@ source $ZSH/oh-my-zsh.sh
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
- if [[ -n $SSH_CONNECTION ]]; then
-   export EDITOR='vim'
- else
-   export EDITOR='vim'
- fi
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='vim'
+fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -100,17 +107,48 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-#
 
+# Utilisation des alias maison
+export PAGER="most -s"
+alias update="sudo apt update"
+alias upgrade="sudo apt upgrade"
+alias upgradable="sudo apt list --upgradable"
+alias vpn="sudo openvpn /home/$USER/Téléchargements/$USER.ovpn &"
+alias novpn="sudo pkill openvpn"
+alias nosf="pkill sf"
 
-## Aliases
-export GPG_TTY=$(tty)
-alias GetIP='ip a s eth0 | grep -E -o "([[:digit:]]{1,3}\.){1,3}([[:digit:]]{1,3}\/[[:digit:]]{1,2})"'
+## Test de fonction
+function map(){
+  nmap -sV -sC -A $1
+}
+
+function netevil(){
+  sudo nc -lnvp $1
+}
+
+function sf(){
+  spiderfoot -l $1:$2 &
+}
+function irc(){
+  irssi -c $1	
+}
+function zipcrack(){
+  print "cracking zip"
+  print "Cible: $1"
+  print "Dictionary: $2 "
+  fcrackzip -v -u -D -p $2 $1
+}
+function evil() {
+  print "Starting Rogue PHP server"
+  print "IP: $1"
+  print "PORT: $2"
+  print "Location: $3"
+  php -S $1:$2 -t $3
+}
 
 ## Chargement de tmux
-if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then 
   exec tmux new -A -s home
 fi
-
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zshk
