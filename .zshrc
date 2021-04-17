@@ -14,7 +14,7 @@ fi
 export PATH=$HOME/bin:/usr/local/bin:/opt:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/tiphergane/.oh-my-zsh"
+export ZSH="/home/$USER/.oh-my-zsh"
 export TERM="xterm-256color"
 
 # Set name of the theme to load --- if set to "random", it will
@@ -127,10 +127,9 @@ export PAGER="most -s"
 alias update="sudo apt update"
 alias upgrade="sudo apt upgrade"
 alias upgradable="sudo apt list --upgradable"
-alias vpn="sudo openvpn /home/tiphergane/Téléchargements/tiphergane.ovpn &"
+alias vpn="sudo openvpn /home/$USER/Téléchargements/$USER.ovpn &"
 alias novpn="sudo pkill openvpn"
 alias nosf="pkill sf"
-alias forti="sudo openfortivpn vpn.corpict.net:443 -c /etc/openfortivpn/config --trusted-cert afe58155764270f0015a448233e81cfd6a7ce9c86dd125cb8c3b8c5d74166fa4 &"
 alias noforti="sudo pkill openfortivpn"
 alias ip="ip --color=auto"
 alias ls="ls --color=auto"
