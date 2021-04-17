@@ -1,3 +1,8 @@
+# Chargement de TMUX
+if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+  exec tmux
+fi
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -9,7 +14,7 @@ fi
 export PATH=$HOME/bin:/usr/local/bin:/opt:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/$USER/.oh-my-zsh"
+export ZSH="/home/tiphergane/.oh-my-zsh"
 export TERM="xterm-256color"
 
 # Set name of the theme to load --- if set to "random", it will
@@ -18,7 +23,10 @@ export TERM="xterm-256color"
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 #ZSH_THEME="robbyrussell"
 ZSH_THEME="powerlevel10k/powerlevel10k"
-#POWERLEVEL9K_MODE='awesome-patched' 
+ZSH_COLORIZE_TOOL=chroma
+ZSH_COLORIZE_STYLE="colorful"
+ZSH_COLORIZE_CHROMA_FORMATTER=terminal256
+#POWERLEVEL9K_MODE='awesome-patched'
 POWERLEVEL9K_MODE='nerdfont-complete'
 
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -78,7 +86,13 @@ COMPLETION_WAITING_DOTS="true"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git ufw debian systemd encode64 gpg-agent nmap torrent)
+plugins=(git ufw debian systemd encode64 gpg-agent
+  \nmap torrent zsh-autosuggestions
+  \zsh-interactive-cd zsh-navigation-tools
+  \web-search tmux chucknorris
+  \colorize extract genpass jsontools
+  \nmap wakeonlan colored-man-pages
+  \zsh-syntax-highlighting ansible)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -113,10 +127,14 @@ export PAGER="most -s"
 alias update="sudo apt update"
 alias upgrade="sudo apt upgrade"
 alias upgradable="sudo apt list --upgradable"
-alias vpn="sudo openvpn /home/$USER/Téléchargements/$USER.ovpn &"
+alias vpn="sudo openvpn /home/tiphergane/Téléchargements/tiphergane.ovpn &"
 alias novpn="sudo pkill openvpn"
 alias nosf="pkill sf"
-
+alias forti="sudo openfortivpn vpn.corpict.net:443 -c /etc/openfortivpn/config --trusted-cert afe58155764270f0015a448233e81cfd6a7ce9c86dd125cb8c3b8c5d74166fa4 &"
+alias noforti="sudo pkill openfortivpn"
+alias ip="ip --color=auto"
+alias ls="ls --color=auto"
+alias diff="diff --color=auto"
 ## Test de fonction
 function map(){
   nmap -sV -sC -A $1
@@ -130,7 +148,7 @@ function sf(){
   spiderfoot -l $1:$2 &
 }
 function irc(){
-  irssi -c $1	
+  irssi -c $1
 }
 function zipcrack(){
   print "cracking zip"
@@ -145,10 +163,20 @@ function evil() {
   print "Location: $3"
   php -S $1:$2 -t $3
 }
-
+function mp3dl() {
+  print "Downloading MP3"
+  print "Youtube link: $1"
+  youtube-dl -x --audio-format mp3 $1
+}
+function rscan(){
+  print "Starting to scan $1"
+  rustscan -a $1 -u 5000 | tee $1_rust.log
+}
 ## Chargement de tmux
-if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then 
-  exec tmux new -A -s home
-fi
+#if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+#  exec tmux new -A -s home
+#fi
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zshk
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
