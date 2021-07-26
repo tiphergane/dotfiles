@@ -6,8 +6,11 @@ Plug 'vim-airline/vim-airline'
 Plug 'sheerun/vim-polyglot'
 Plug 'ycm-core/YouCompleteMe'
 Plug 'tpope/vim-fugitive'
-Plug 'ErichDonGubler/vim-sublime-monokai'
-Plug 'morhetz/gruvbox'
+"Plug 'ErichDonGubler/vim-sublime-monokai'
+Plug 'crusoexia/vim-monokai'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plug 'ryanoasis/vim-devicons'
 Plug 'tpope/vim-surround'
 Plug 'git://git.wincent.com/command-t.git'
 Plug 'mattn/emmet-vim'
@@ -30,6 +33,8 @@ Plug 'preservim/nerdcommenter'
 Plug 'lervag/vimtex'
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install' }
 Plug 'junegunn/fzf.vim'
+Plug 'rkitover/vimpager'
+Plug 'ycm-core/YouCompleteMe'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install()  }, 'for': ['markdown', 'vim-plug'] }
 call plug#end()
 "}}}
@@ -39,6 +44,8 @@ set laststatus=2
 set showtabline=2
 set termguicolors
 set t_Co=256
+set t_AB=^[[48;5;%dm
+set t_AF=^[[38;5;%dm
 set spelllang=fr,it,en_us
 set relativenumber
 set nu
@@ -60,8 +67,10 @@ set smartindent
 set wildmenu
 set wildmode=longest:full
 set foldmethod=marker
+set termguicolors
 filetype on
 filetype plugin indent on
+syntax on
 "}}}
 "Colorscheme {{{
 colorscheme sublimemonokai
@@ -84,7 +93,8 @@ let g:ale_linters = {
 			\'cs': ['csc', 'mcs', 'mcsc'],
 			\'json': ['jq', 'jsonlint', 'spectral'],
 			\'sh': ['shellcheck'],
-			\'php': ['intelephense', 'langserver', 'phan', 'php', 'phpcs', 'phpmd', 'phpstan', 'psalm', 'tlint']
+			\'php': ['intelephense', 'langserver', 'phan', 'php', 'phpcs', 'phpmd', 'phpstan', 'psalm', 'tlint'],
+			\'S': 'all'
 			\}
 let g:ale_fixers = {
 			\'*': ['remove_trailing_lines','trim_whitespace'],
@@ -99,6 +109,34 @@ let g:ale_fixers = {
 			\'php': ['php_cs_fixer','phpcbf'],
 			\'css':['prettier']
 			\}
+let g:ale_completion_symbols = {
+    \ 'text': '',
+    \ 'method': '',
+    \ 'function': '',
+    \ 'constructor': '',
+    \ 'field': '',
+    \ 'variable': '',
+    \ 'class': '',
+    \ 'interface': '',
+    \ 'module': '',
+    \ 'property': '',
+    \ 'unit': 'v',
+    \ 'value': 'v',
+    \ 'enum': 't',
+    \ 'keyword': 'v',
+    \ 'snippet': 'v',
+    \ 'color': 'v',
+    \ 'file': 'v',
+    \ 'reference': 'v',
+    \ 'folder': 'v',
+    \ 'enum_member': 'm',
+    \ 'constant': 'm',
+    \ 'struct': 't',
+    \ 'event': 'v',
+    \ 'operator': 'f',
+    \ 'type_parameter': 'p',
+    \ '<default>': 'v'
+    \ }
 let g:user_emmet_leader_key=','
 let g:ale_completion_enabled = 1
 let g:ale_sign_column_always = 1
@@ -113,17 +151,21 @@ let g:ale_python_black_options = '-m black'
 let g:ale_python_autopep8_executable = 'python3'
 let g:ale_python_autopep8_options = '-m autopep8'
 let g:airline#extensions#ale#enabled = 1
-let g:sublimemonokai_term_italic = 1
-let g:sublimemonokai_gui_italic = 1
+let g:airline#extensions#fzf#enabled = 1
+let g:airline#extensions#ycm#enabled = 1
+let g:airline#extensions#vimcmake#enabled = 1
+let g:sublimemonokai_term_italic = 0
+let g:sublimemonokai_gui_italic = 0
 let g:uncrustify_bin_path = 'uncrustify'
 let g:rainbow_active = 1
-
+"let g:airline_left_sep = ">"
+"let g:airline_right_sep = "<"
 let g:rainbow_load_separately = [
-			\ [ '*' , [['(', ')'], ['\[', '\]'], ['{', '}']]],
-			\ [ '*.tex' , [['(', ')'], ['\[', '\]']] ],
-			\ [ '*.cpp' , [['(', ')'], ['\[', '\]'], ['{', '}']] ],
-			\ [ '*.{html,htm}' , [['(', ')'], ['\[', '\]'], ['{', '}'], ['<\a[^>]*>', '</[^>]*>']] ],
-			\ ]
+    \ [ '*' , [['(', ')'], ['\[', '\]'], ['{', '}']]],
+    \ [ '*.tex' , [['(', ')'], ['\[', '\]']] ],
+    \ [ '*.cpp' , [['(', ')'], ['\[', '\]'], ['{', '}']] ],
+    \ [ '*.{html,htm}' , [['(', ')'], ['\[', '\]'], ['{', '}'], ['<\a[^>]*>', '</[^>]*>'],['<\h[^>]*>','</[^>]*>']] ],
+    \ ]
 
 let g:rainbow_guifgs = ['RoyalBlue3', 'DarkOrange3', 'DarkOrchid3', 'FireBrick']
 let g:rainbow_ctermfgs = ['lightblue', 'lightgreen', 'yellow', 'red', 'magenta']
@@ -254,11 +296,13 @@ map <silent> <leader>s' :<cr>ysw'<cr>
 map <silent> <leader>s( :<cr>ysw(<cr>
 map <silent> <leader>s[ :<cr>ysw[<cr>
 map <silent> <leader>tm :FloatermToggle<CR>
-map <silent> <leader>fb :Buffers<CR>
-map <silent> <leader>ff :Files<cr>
-map <silent> <leader>fl :Lines<CR>
+map <silent> <leader>fsb :Buffers<CR>
+map <silent> <leader>fsf :Files<CR>
+map <silent> <leader>fsl :Lines<CR>
 map <silent> <C-e> <Plug>(ale_next_wrap)
 map <silent> <C-i> <Plug>(ale_previous_wrap)
+map <silent> <leader>ff :Files<cr>
+map <silent> <leader>mp <Plug>MarkdownPreviewToggle<cr>
 map <silent> <leader><leader> :<cr>zA<cr>
 vnoremap <leader><Tab> <Esc>
 nnoremap <leader><Tab> <Esc>
@@ -268,4 +312,5 @@ nmap <leader>ge :diffget //2<CR>
 nmap <leader>gs :G<CR>
 nmap <leader>gc :Gcommit<CR>
 nmap <leader>gp :Gpush<CR>
+autocmd BufWriteCmd,BufRead *.json :%!python3 -m json.tool
 "}}}
